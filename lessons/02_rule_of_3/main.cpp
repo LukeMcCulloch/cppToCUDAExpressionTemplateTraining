@@ -23,6 +23,33 @@ public:
 
     }
 
+    // Copy constructor: allocate OUR OWN buffer, then copy elements over.
+    // Runs when constructing a new object from an existing one, e.g.
+    // `IntBuffer b = a;` or passing/returning by value.
+    IntBuffer(const IntBuffer& other)
+        : size_(other.size_), data_(new int[other.size_]) {
+        for (std::size_t i = 0; i < size_; ++i) data_[i] = other.data_[i];
+        std::cout << "copy-constructed " << size_ << " ints at " << data_
+                << " (from " << other.data_ << ")\n";
+    }
+
+    
+
+    // Copy assignment: `this` already owns a buffer from earlier -- must
+    // release it before taking on a new one, and must guard against
+    // self-assignment (`a = a;`), which would free the buffer out from
+    // under itself before trying to copy from it.
+    IntBuffer& operator=(const IntBuffer& other) {
+        if (this == &other) return *this;
+
+        delete[] data_;
+        size_ = other.size_;
+        data_ = new int[size_];
+        for (std::size_t i = 0; i < size_; ++i) data_[i] = other.data_[i];
+        std::cout << "copy-assigned " << size_ << " ints at " << data_ << "\n";
+        return *this;
+    }
+
     ~IntBuffer() 
     {
         std::cout << "IntBuffer of size " << " " << size_ << " to be destructed." << std::endl;
@@ -70,11 +97,22 @@ void demo_copy_bug()
   // free. Undefined behavior: might crash here, might corrupt the heap
   // silently and crash somewhere unrelated later, might "work" by luck.
 
-  int main() 
-  {
-      demo_copy_bug();
-      return 0;
-  }
+//   int main() 
+//   {
+//       demo_copy_bug();
+//       return 0;
+//   }
+
+  int main() {
+    demo_copy_bug();
+
+    IntBuffer c(2);
+    IntBuffer a(4);
+    a[0] = 42;
+    c = a;   // THIS is copy assignment -- c already exists
+    std::cout << "c[0]=" << c[0] << "\n";
+    return 0;
+}
 
 // output:
 
