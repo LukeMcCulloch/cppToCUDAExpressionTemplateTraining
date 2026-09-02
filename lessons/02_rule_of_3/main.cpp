@@ -18,7 +18,7 @@ public:
         std::cout << "IntBuffer of size " << " " << n << " to be constructed." << std::endl;
 
         for (std::size_t i = 0; i < size_; ++i) data_[i] = 0; // initialize to zero
-        std::cout << "aquired " << size_ << " int at " << data_ << "\n"; // why no endl?  (if we wait and flush more prints at once, we can see the order of construction and destruction more clearly)??
+        std::cout << "aquired " << size_ << " int at " << static_cast<void*>(data_) << "\n"; // why no endl?  (if we wait and flush more prints at once, we can see the order of construction and destruction more clearly)??
         std::cout << "IntBuffer of size " << " " << n << " constructed." << std::endl;
 
     }
