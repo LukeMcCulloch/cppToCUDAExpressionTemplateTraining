@@ -61,6 +61,13 @@ public:
     int &operator[](std::size_t i) { return data_[i]; } // return reference to the i-th element of the buffer // why not the element itself?  why not const? 
     std::size_t size() const { return size_;  } // return the size of the buffer
 
+
+    // public gettr and setter for the data_ pointer, for demonstration purposes only.  In real code, you would not expose the raw pointer like this.
+    int* data() const { return data_; }
+
+    bool shares_storage_with(const IntBuffer& other) const { return data_ == other.data_; }
+
+
 private:
 
     std::size_t size_;
@@ -81,6 +88,15 @@ void demo_copy_bug()
                         // copies size_ and the raw pointer data_ member-by-member, 
                         // so now a and b both point to the same heap array of ints.  
                         // When a and b go out of scope, they will both try to delete[] the same pointer, which is undefined behavior.
+
+    // print a=?=b?
+	// in this sample code, we have an explicit copy constructor, 
+    // so a and b do NOT share the same storage.  
+    // If you comment out the copy constructor, 
+    // then a and b will share the same storage, 
+    // which is a bug.
+    std::cout << "a and b share storage: " << (a.data() == b.data() ? "yes" : "no") << "\n";
+    std::cout << "a and b share storage: " << (a.shares_storage_with(b) ? "yes" : "no") << "\n";
 
     b[0] = 99;
     std::cout << "a[0]=" << a[0] << " (changing b changed a too)\n"; // why no endl again?  because the next line is a cout, and it will flush the buffer anyway.  
