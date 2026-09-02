@@ -20,7 +20,8 @@ public:
         for (std::size_t i = 0; i < size_; ++i) data_[i] = 0; // initialize to zero
         std::cout << "aquired " << size_ << " int at " << static_cast<void*>(data_) << "\n"; // why no endl?  (if we wait and flush more prints at once, we can see the order of construction and destruction more clearly)??
         std::cout << "IntBuffer of size " << " " << n << " constructed." << std::endl;
-
+        std::cout << "acquired " << *this << "\n";
+        std::cout << "vanilla constructor done.  acquired " << *this << "\n";
     }
 
     // Copy constructor: allocate OUR OWN buffer, then copy elements over.
@@ -31,6 +32,7 @@ public:
         for (std::size_t i = 0; i < size_; ++i) data_[i] = other.data_[i];
         std::cout << "copy-constructed " << size_ << " ints at " << data_
                 << " (from " << other.data_ << ")\n";
+        std::cout << "copy constructor done.  acquired " << *this << "\n";
     }
 
     
@@ -47,6 +49,7 @@ public:
         data_ = new int[size_];
         for (std::size_t i = 0; i < size_; ++i) data_[i] = other.data_[i];
         std::cout << "copy-assigned " << size_ << " ints at " << data_ << "\n";
+        std::cout << "copy assignment done.  acquired " << *this << "\n";
         return *this;
     }
 
@@ -55,7 +58,19 @@ public:
         std::cout << "IntBuffer of size " << " " << size_ << " to be destructed." << std::endl;
         delete[] data_; // release the heap array, c++17 guarantees that delete[] is safe to call on nullptr.
         std::cout << "released " << size_ << " int at " << data_ << "\n"; // why no endl?
+        std::cout << "released " << size_ << " int at " << static_cast<void*>(data_) << "\n";
         std::cout << "IntBuffer of size " << " " << size_ << " destructed." << std::endl;
+        /*
+        static_cast<void*>(data_) converts the type the compiler treats data_ as 
+        from int* to void* 
+        — without touching the actual bits, 
+            the address stays exactly the same value either way. 
+        - void* is C++'s "generic pointer" type: it can hold any object pointer's value 
+            but has lost the information about what type it points to 
+            (you can't dereference a void* or do pointer arithmetic on it for exactly that reason 
+        — the compiler no longer knows the pointee's size).
+        */
+
     }
 
     int &operator[](std::size_t i) { return data_[i]; } // return reference to the i-th element of the buffer // why not the element itself?  why not const? 
@@ -65,7 +80,16 @@ public:
     // public gettr and setter for the data_ pointer, for demonstration purposes only.  In real code, you would not expose the raw pointer like this.
     int* data() const { return data_; }
 
+	// access control is per-class, not per-object 
+    // so this method can access the private data_ of any IntBuffer, not just this one.
     bool shares_storage_with(const IntBuffer& other) const { return data_ == other.data_; }
+
+	// friend declaration: this function is not a member of IntBuffer, 
+    // but it can access its private members.
+	// tinkering around with this function is a good way to see how 
+    // the copy constructor and assignment operator work, 
+    // and to see the effects of shallow vs deep copies.
+    friend std::ostream& operator<<(std::ostream&, const IntBuffer&); // just a declaration
 
 
 private:
@@ -77,6 +101,16 @@ private:
     // That generated copy is about to do something you don't want --
     // watch closely below.
 };
+
+std::ostream& operator<<(std::ostream& os, const IntBuffer& b) {
+    os << "IntBuffer(size=" << b.size_
+        << ", data_=" << static_cast<const void*>(b.data_) << ") = [";
+    for (std::size_t i = 0; i < b.size_; ++i) {
+        os << b.data_[i];
+        if (i + 1 < b.size_) os << ", ";
+    }
+    return os << "]";
+}
 
 void demo_copy_bug() 
 {
