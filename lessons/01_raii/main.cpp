@@ -25,10 +25,10 @@ public:
 
     ~IntBuffer() 
     {
-        std::cout << "IntBuffer of size " << " " << size_ << " to be destructed." << std::endl;
-        delete[] data_; // release the heap array, c++17 guarantees that delete[] is safe to call on nullptr.
+        std::cout << "IntBuffer of size " << size_ << " to be destructed." << std::endl;
+        delete[] data_; // release the heap array, c++ guarantees that delete[] is safe to call on nullptr.
         std::cout << "released " << size_ << " int at " << data_ << "\n"; // why no endl?
-        std::cout << "IntBuffer of size " << " " << size_ << " destructed." << std::endl;
+        std::cout << "IntBuffer of size " << size_ << " destructed." << std::endl;
     }
 
     int &operator[](std::size_t i) { return data_[i]; } // return reference to the i-th element of the buffer // why not the element itself?  why not const? 
