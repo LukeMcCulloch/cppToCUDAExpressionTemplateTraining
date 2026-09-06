@@ -163,6 +163,7 @@ void demo_vector_growth() {
 
 
 int main() {
+    std::cout << "Lesson: Rule of 5" << std::endl;
     demo_move_vs_copy();
     demo_vector_growth();
     return 0;

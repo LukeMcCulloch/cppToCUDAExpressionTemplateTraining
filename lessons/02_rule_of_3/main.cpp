@@ -189,6 +189,7 @@ void demo_copy_bug()
 
 
 int main() {
+    std::cout << "Lesson: Rule of 3" << std::endl;
     demo_copy_bug();
 
     IntBuffer c(2);
