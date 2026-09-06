@@ -1,0 +1,1 @@
+add_executable(04_rule_of_0 main.cpp)

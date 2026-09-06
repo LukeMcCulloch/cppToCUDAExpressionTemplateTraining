@@ -1,0 +1,1 @@
+add_executable(05_rule_of_0_composed main.cpp)
