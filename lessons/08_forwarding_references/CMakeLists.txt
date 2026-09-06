@@ -1,0 +1,1 @@
+add_executable(08_forwarding_references main.cpp)

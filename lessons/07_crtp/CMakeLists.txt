@@ -1,0 +1,1 @@
+add_executable(07_crtp main.cpp)
