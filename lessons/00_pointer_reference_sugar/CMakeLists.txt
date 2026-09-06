@@ -1,0 +1,2 @@
+add_subdirectory(lessons/00_pointer_reference_sugar)
+add_executable(00_prs main.cpp)
