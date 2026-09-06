@@ -73,3 +73,35 @@ int main() {
 
     return 0;
 }
+
+
+/*
+
+-- relay(named)  [lvalue] --
+  relay<T>: T deduced as Point&  (lvalue arg)
+  relay: sink(p), no std::forward:
+    sink(const Point&) ran  -- treated as an lvalue
+  relay: sink(std::forward<T>(p)):
+    sink(const Point&) ran  -- treated as an lvalue
+
+-- relay(Point{2})  [temporary/rvalue] --
+  relay<T>: T deduced as Point   (rvalue arg)
+  relay: sink(p), no std::forward:
+    sink(const Point&) ran  -- treated as an lvalue
+  relay: sink(std::forward<T>(p)):
+    sink(Point&&) ran       -- treated as an rvalue
+
+-- relay(std::move(named))  [explicit rvalue cast] --
+  relay<T>: T deduced as Point   (rvalue arg)
+  relay: sink(p), no std::forward:
+    sink(const Point&) ran  -- treated as an lvalue
+  relay: sink(std::forward<T>(p)):
+    sink(Point&&) ran       -- treated as an rvalue
+
+-- not_forwarding: only accepts rvalues --
+  not_forwarding: ran, size=3 (only rvalues can ever reach this)
+
+C:\tlm\projects\cppToCUDAExpressionTemplateTraining\out\build\x64-Debug\lessons\08_forwarding_references\08_forwarding_references.exe (process 86536) exited with code 0 (0x0).
+Press any key to close this window . . .
+
+*/
