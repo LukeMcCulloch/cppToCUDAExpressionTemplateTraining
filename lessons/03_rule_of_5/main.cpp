@@ -112,6 +112,23 @@ public:
     
     */
 
+
+
+    ~IntBuffer() {
+        delete[] data_;
+    }
+
+    int& operator[](std::size_t i) { return data_[i]; }
+    const int& operator[](std::size_t i) const { return data_[i]; }
+    std::size_t size() const { return size_; }
+
+private:
+    std::size_t size_;
+    int* data_;
+};
+
+
+
     void demo_move_vs_copy() {
         std::cout << "\n-- construct a --\n";
         IntBuffer a(4);
@@ -133,25 +150,20 @@ public:
 
     }
 
-    
-    ~IntBuffer() {
-        delete[] data_;
-    }
 
-    int& operator[](std::size_t i) { return data_[i]; }
-    const int& operator[](std::size_t i) const { return data_[i]; }
-    std::size_t size() const { return size_; }
 
-private:
-    std::size_t size_;
-    int* data_;
-};
-
+void demo_vector_growth() {
+    std::cout << "\n-- vector<IntBuffer> growth: watch what happens to the FIRST element --\n";
+    std::vector<IntBuffer> v;
+    v.reserve(1); // deliberately tiny, so the 2nd emplace_back must reallocate
+    v.emplace_back(2);
+    std::cout << "-- pushing a 2nd element now, forcing reallocation --\n";
+    v.emplace_back(2);
+}
 
 
 int main() {
-    IntBuffer a(4); // <-- DEFAULT CONSTRUCTOR INVOKED HERE
-
-
-
+    demo_move_vs_copy();
+    demo_vector_growth();
+    return 0;
 }
