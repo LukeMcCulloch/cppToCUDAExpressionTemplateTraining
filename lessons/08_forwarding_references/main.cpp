@@ -3,6 +3,9 @@
 #include <type_traits>  // std::is_lvalue_reference_v
 #include <vector>
 // FORWARDING REFERENCES
+//
+// Lvalue and Rvalue control over things passed into functions.  
+//
 /*
 What "forwarding" actually means, conceptually — worth having this in plain words, 
 separate from the mechanics (reference collapsing, T&&) we already covered:

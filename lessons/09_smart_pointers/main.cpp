@@ -78,3 +78,34 @@ int main() {
 
     return 0;
 }
+
+
+
+/*
+
+"The framing worth having going in: std::unique_ptr is Rule of 5, already correctly written, for a single heap object — it's what IntBuffer would be if all it needed to do was own one thing. You're not learning a new concept here so much 
+as seeing the thing you built by hand handed back to you, pre-built, for free."
+
+-- what parts of our rule of 5 tutorial (IntBuffer class) does unique_ptr implement?
+
+move semantics (move constructor and move operator=), but not copy semantics?
+Yes, exactly right — confirmed precisely, member by member:
+
+Special member	IntBuffer (lesson 3)	unique_ptr
+Destructor	delete[] data_;	Implements it 
+— calls delete (or your custom deleter) on the owned pointer. Same job.
+Copy constructor Deep-copies into a new buffer	Deleted. 
+Doesn't exist at all — attempting to copy is a compile error.
+Copy assignment	Deep-copies, with self-assignment guard	Deleted. Same as above.
+Move constructor 
+Steals the pointer, nulls the source
+Implements it — identical steal-and-null logic.
+Move assignment	Releases its own resource, steals, nulls the source, self-move guard 
+Implements it — same shape.
+So your summary is exactly it: move semantics, fully implemented; copy semantics, 
+not implemented at all (deleted, not just "not written"). 
+That's the precise sense in which unique_ptr is "3 of the 5, done for you" 
+rather than "all 5, done for you" 
+— the two it omits are omitted on purpose, because allowing them would contradict what "unique" means.
+
+*/
