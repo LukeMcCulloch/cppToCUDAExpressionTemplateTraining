@@ -101,8 +101,60 @@ struct VecEpr
     const Derived& self() const { return static_cast<const Derived&>(*this); } // get through to the real type.  -> cast this base to the derived type, so we can call derived methods from the base class
     
     double operator[](std::size_t i) const { return self()[i]; } // look up operator[] on the real type, not on me, via the CRTP implemented in self() above. -> look up operator[] on the real type, not on me, via the CRTP implemented in self() above.
-    std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above. -> look up size() on the real type, not on me, via the CRTP implemented in self() above.    
- }
+    std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above. -> look up size() on the real type, not on me, via the CRTP implemented in self() above.
+};
+
+// THE central decision of this lesson -- and the exact idea your old
+// ExpressionTemplates repo was reaching for (its A_Traits/ExprRef
+// pattern), just with the dangling-reference bug still live in it there.
+//
+// Default: store BY VALUE. Correct for expression NODES (AddExpr,
+// etc.) -- cheap to copy (just a couple of members) and frequently
+// temporaries themselves, e.g. the inner (a+b) in (a+b)+c. Storing them
+// by value is what makes that safe: no reference to a temporary that's
+// about to die.
+template <typename T>
+struct ExprTraits { using ExprRef = T; };
+
+// Specialized for Vector: store BY CONST REFERENCE. Vector is expensive
+// to copy (a real heap buffer), and a named Vector passed into an
+// expression outlives the expression using it in ordinary code -- so a
+// reference is both safe and avoids an expensive copy.
+template <>
+struct ExprTraits<Vector> { using ExprRef = const Vector&; };
+
+// AddExpr stores whatever ExprTraits<LHS>::ExprRef / ExprTraits<RHS>::ExprRef
+// resolve to -- a reference for a Vector operand, a value for a nested
+// expression-node operand. That's the whole fix, made structural instead
+// of hoped-for.
+template <typename LHS, typename RHS>
+class AddExpr : public VecExpr<AddExpr<LHS, RHS>> {
+public:
+    AddExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
+
+    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }
+    std::size_t size() const { return lhs_.size(); }
+
+private:
+    typename ExprTraits<LHS>::ExprRef lhs_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+template <typename LHS, typename RHS>
+AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
+    return AddExpr<LHS, RHS>(lhs.self(), rhs.self());
+}
+
+// The "DependentVar"-equivalent moment: forces a lazy expression tree
+// into a real, concrete Vector.
+template <typename Derived>
+Vector evaluate(const VecExpr<Derived>& expr) {
+    Vector result(expr.size());
+    for (std::size_t i = 0; i < expr.size(); ++i) result[i] = expr[i];
+    return result;
+}
+
+
 
 int main() {
     Vector a(3), b(3), c(3);
