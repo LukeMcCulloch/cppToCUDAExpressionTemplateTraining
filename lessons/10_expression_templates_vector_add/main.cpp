@@ -1,13 +1,27 @@
 #include <iostream>
 #include <memory>
 
+
+
+// CRTP base -- same self() idiom as lesson 07, and the same shape as
+// Expr<Derived> from your very first AD project's TinyADExpr.hpp.
+template <typename Derived>
+struct VecExpr 
+{
+    // CRTP: cast this base to the derived type, so we can call derived methods from the base class
+    const Derived& self() const { return static_cast<const Derived&>(*this); } // get through to the real type.  -> cast this base to the derived type, so we can call derived methods from the base class
+    
+    double operator[](std::size_t i) const { return self()[i]; } // look up operator[] on the real type, not on me, via the CRTP implemented in self() above. -> look up operator[] on the real type, not on me, via the CRTP implemented in self() above.
+    std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above. -> look up size() on the real type, not on me, via the CRTP implemented in self() above.
+};
+
 // Vector: the leaf, data-owning type. Built on the exact judgment call
 // from the smart-pointers lesson -- unique_ptr<double[]> gives
 // destructor AND move for free (neither is written below at all; the
 // compiler-generated versions are already correct, because unique_ptr's
 // own move/destructor already are). Copy is the one thing unique_ptr
 // can't guess for us, so it's the only special member written by hand.
-class Vector
+class Vector : public VecExpr<Vector>
 {
 public:
     explicit Vector(std::size_t n) : size_(n), data_(std::make_unique<double[]>(n)) {} // memsets to zero under the hood (or loops, but anyway), so no need to loop and zero-initialize ourselves
@@ -91,18 +105,6 @@ private:
     // Copy is the one thing unique_ptr doesn't implement, so we do it by hand.
 };
 
-
-// CRTP base -- same self() idiom as lesson 07, and the same shape as
-// Expr<Derived> from your very first AD project's TinyADExpr.hpp.
-template <typename Derived>
-struct VecEpr 
-{
-    // CRTP: cast this base to the derived type, so we can call derived methods from the base class
-    const Derived& self() const { return static_cast<const Derived&>(*this); } // get through to the real type.  -> cast this base to the derived type, so we can call derived methods from the base class
-    
-    double operator[](std::size_t i) const { return self()[i]; } // look up operator[] on the real type, not on me, via the CRTP implemented in self() above. -> look up operator[] on the real type, not on me, via the CRTP implemented in self() above.
-    std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above. -> look up size() on the real type, not on me, via the CRTP implemented in self() above.
-};
 
 // THE central decision of this lesson -- and the exact idea your old
 // ExpressionTemplates repo was reaching for (its A_Traits/ExprRef
