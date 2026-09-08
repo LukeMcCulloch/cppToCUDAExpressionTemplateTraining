@@ -118,6 +118,8 @@ private:
 // about to die.
 template <typename T>
 struct ExprTraits { using ExprRef = T; };
+// defines ExprRef as just another name for T
+
 
 // Specialized for Vector: store BY CONST REFERENCE. Vector is expensive
 // to copy (a real heap buffer), and a named Vector passed into an
@@ -125,6 +127,7 @@ struct ExprTraits { using ExprRef = T; };
 // reference is both safe and avoids an expensive copy.
 template <>
 struct ExprTraits<Vector> { using ExprRef = const Vector&; };
+// redefines ExprRef as "const Vectort&" for Vectors
 
 // AddExpr stores whatever ExprTraits<LHS>::ExprRef / ExprTraits<RHS>::ExprRef
 // resolve to -- a reference for a Vector operand, a value for a nested
@@ -135,7 +138,7 @@ class AddExpr : public VecExpr<AddExpr<LHS, RHS>> {
 public:
     AddExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
 
-    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }
+    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }// hsappily recurses through chains of additions.
     std::size_t size() const { return lhs_.size(); }
 
 private:

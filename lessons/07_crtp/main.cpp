@@ -38,7 +38,10 @@ struct Shape {
     double area() const { return self().area_impl(); }
 };
 
-struct Circle : Shape<Circle> { // Shape<Circle> tells the compiler that the base class is a Shape instantiated with the derived type Circle. This is the "curiously recurring" part of CRTP.
+struct Circle : Shape<Circle> { 
+    // Shape<Circle> tells the compiler 
+    // that the base class is a Shape instantiated with the derived type Circle. 
+    // This is the "curiously recurring" part of CRTP.
     double r;
     explicit Circle(double radius) : r(radius) {}
     double area_impl() const { return 3.14159 * r * r; }
