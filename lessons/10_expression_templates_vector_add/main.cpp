@@ -163,6 +163,12 @@ Vector evaluate(const VecExpr<Derived>& expr) {
     Vector result(expr.size());// allocate a real Vector called "result" to hold the result
     // double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }
     for (std::size_t i = 0; i < expr.size(); ++i) result[i] = expr[i]; // very lazy evaluation: 
+	// note the type of expr is VecExpr<Derived>, 
+    // so expr[i] calls operator[](std::size_t i) const 
+    // on the VecExpr<Derived> object, which calls self() to get the Derived object, 
+    // and then calls operator[](std::size_t i) const on the Derived object, 
+    // which is either a Vector or an AddExpr<LHS,RHS>.
+    //
     // just loop over the expression and fill in the result Vector.  
     // This is where the actual computation happens, and where the expression tree is traversed.
     return result;
@@ -193,3 +199,42 @@ int main() {
 
     return 0;
 }
+
+
+
+
+/*
+
+this is the key:
+
+for (std::size_t i = 0; i < expr.size(); ++i) result[i] = expr[i];
+
+* note the type of expr is VecExpr<Derived>,
+* so expr[i] calls operator[](std::size_t i) const on the VecExpr<Derived> object,
+* which calls self() to get the Derived object,
+* and then calls operator[](std::size_t i) const on the Derived object, 
+* which is either a Vector or an AddExpr<LHS,RHS>.
+* 
+* how does it resolve to AddExpr<LHS,RHS>::operator[](std::size_t i) const?  
+  * the Derived type is AddExpr<LHS,RHS>, so self() returns a const AddExpr<LHS,RHS>&, 
+  * and then operator[](std::size_t i) const 
+  * on that object calls AddExpr<LHS,RHS>::operator[](std::size_t i) const, 
+  * which returns lhs_[i] + rhs_[i], which are either Vectors or other AddExprs, 
+  * and so on recursively until we hit the leaf Vectors, which return their actual data.
+  * 
+  * 
+* why is the Derived type is AddExpr<LHS,RHS>?  
+    * Answer: because we have an overload of operator+ that returns an AddExpr<LHS,RHS> 
+	*   we have no other operator+ overloads for VecExprs, so the compiler chooses that one
+	*   but how did it know it was a VecExpr<LHS> and VecExpr<RHS>?
+	*       - I thought it figured it out purely because there were no other operator+ overloads
+* but how does it match the right operands?  The operands look like vectors to me.
+    Answer: 
+ 
+	*       - because the operator+ is a template that takes two VecExprs,
+    * when we add two VecExprs together.
+        * because the expression a + b + c parses as (a + b) + c, 
+        * so the inner (a+b) is an AddExpr<Vector,Vector>, 
+        * and the outer (a+b)+c is an AddExpr<AddExpr<Vector,Vector>, Vector>, 
+        * so the Derived type is AddExpr<AddExpr<Vector,Vector>, Vector> for the outer expression.
+*/
