@@ -138,7 +138,7 @@ class AddExpr : public VecExpr<AddExpr<LHS, RHS>> {
 public:
     AddExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
 
-    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }// hsappily recurses through chains of additions.
+    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }// happily recurses through chains of additions.
     std::size_t size() const { return lhs_.size(); }
 
 private:
