@@ -92,7 +92,8 @@ public:
         return *this;
     }
 
-    // destructor, move assignment, move constructor: all implemented by unique_ptr<double[]> for us, so we don't write them here.
+    // destructor, move assignment, move constructor: 
+    //      all implemented by unique_ptr<double[]> for us, so we don't write them here.
 
     double& operator[](std::size_t i) { return data_[i]; } 
     const double& operator[](std::size_t i) const { return data_[i]; }
@@ -145,14 +146,22 @@ private:
 template <typename LHS, typename RHS>
 AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
     return AddExpr<LHS, RHS>(lhs.self(), rhs.self());
+    // about self(): the lhs and rhs are VecExpr<LHS> and VecExpr<RHS> respectively, 
+    // so self() returns a const LHS& and const RHS& respectively.  
+    // The AddExpr constructor takes const LHS& and const RHS& respectively, so this works out.
+    // CRTP:
+    // const Derived& self() const { return static_cast<const Derived&>(*this); } 
 }
 
 // The "DependentVar"-equivalent moment: forces a lazy expression tree
 // into a real, concrete Vector.
 template <typename Derived>
 Vector evaluate(const VecExpr<Derived>& expr) {
-    Vector result(expr.size());
-    for (std::size_t i = 0; i < expr.size(); ++i) result[i] = expr[i];
+    Vector result(expr.size());// allocate a real Vector called "result" to hold the result
+    // double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }
+    for (std::size_t i = 0; i < expr.size(); ++i) result[i] = expr[i]; // very lazy evaluation: 
+    // just loop over the expression and fill in the result Vector.  
+    // This is where the actual computation happens, and where the expression tree is traversed.
     return result;
 }
 
