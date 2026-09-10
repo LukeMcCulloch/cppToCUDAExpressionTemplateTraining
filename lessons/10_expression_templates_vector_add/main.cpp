@@ -138,7 +138,7 @@ class AddExpr : public VecExpr<AddExpr<LHS, RHS>> {
 public:
     AddExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
 
-    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }// happily recurses through chains of additions.
+    double operator[](std::size_t i) const { return lhs_[i] + rhs_[i]; }// iteration though all i is done by the evaluate function
     std::size_t size() const { return lhs_.size(); }
 
 private:
@@ -146,6 +146,9 @@ private:
     typename ExprTraits<RHS>::ExprRef rhs_;
 };
 
+//
+// note!: AddExpr is not a member of any of the classes AddExpr, Vector, or struct VecExpr 
+//
 template <typename LHS, typename RHS>
 AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
     return AddExpr<LHS, RHS>(lhs.self(), rhs.self());
@@ -155,6 +158,34 @@ AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
     // CRTP:
     // const Derived& self() const { return static_cast<const Derived&>(*this); } 
 }
+
+
+template <typename LHS, typename RHS>
+class SubExpr : public VecExpr<SubExpr<LHS, RHS>> {
+public:
+    SubExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
+
+    double operator[](std::size_t i) const { return lhs_[i] - rhs_[i]; }// iteration though all i is done by the evaluate function
+    std::size_t size() const { return lhs_.size(); }
+
+private:
+    typename ExprTraits<LHS>::ExprRef lhs_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+template <typename LHS, typename RHS>
+SubExpr<LHS, RHS> operator-(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
+    return SubExpr<LHS, RHS>(lhs.self(), rhs.self());
+    // about self(): the lhs and rhs are VecExpr<LHS> and VecExpr<RHS> respectively, 
+    // so self() returns a const LHS& and const RHS& respectively.  
+    // The AddExpr constructor takes const LHS& and const RHS& respectively, so this works out.
+    // CRTP:
+    // const Derived& self() const { return static_cast<const Derived&>(*this); } 
+}
+
+
+
+
 
 // The "DependentVar"-equivalent moment: forces a lazy expression tree
 // into a real, concrete Vector.
@@ -196,6 +227,17 @@ int main() {
         if (i + 1 < result.size()) std::cout << ", ";
     }
     std::cout << "]\n(expected [111, 222, 333])\n";
+
+
+
+    Vector result2 = evaluate(c - b - a);
+
+    std::cout << "c - b - a = [";
+    for (std::size_t i = 0; i < result2.size(); ++i) {
+        std::cout << result2[i];
+        if (i + 1 < result2.size()) std::cout << ", ";
+    }
+    std::cout << "]\n(expected [89, 178, 267])\n";
 
     return 0;
 }
