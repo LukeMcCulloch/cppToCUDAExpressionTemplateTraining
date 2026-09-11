@@ -4,7 +4,7 @@
 
 
 
-class Matrix : public MatExpr<Matrix>{
+class Matrix : public MatExpr<Matrix>
 {
 
 public:

@@ -101,8 +101,7 @@ private:
 
 // operator free function
 template <typename RHS>
-MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v)
-{
+MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v) {
     return MatVecMultExpr<RHS>(m, v.self());
 }
 

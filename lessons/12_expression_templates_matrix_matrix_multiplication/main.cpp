@@ -73,5 +73,38 @@ int main() {
     std::cout << "\n";
     std::cout << "(expected [14, 14, 17])\n";
 
+
+
+    // MATMUL
+    Matrix A(2, 2);
+    A(0, 0) = 1; A(0, 1) = 2;
+    A(1, 0) = 3; A(1, 1) = 4;
+
+    Matrix B(2, 2);
+    B(0, 0) = 5; B(0, 1) = 6;
+    B(1, 0) = 7; B(1, 1) = 8;
+
+
+
+    std::cout << "\n";
+    std::cout << "A = " << "\n";
+    std::cout << "| 1, 2 |" << "\n";
+    std::cout << "| 3, 4 |" << "\n";
+
+
+
+
+    std::cout << "\n";
+    std::cout << "B = " << "\n";
+    std::cout << "| 5, 6 |" << "\n";
+    std::cout << "| 7, 8 |" << "\n";
+
+
+    std::cout << "\n";
+    Matrix C = evaluate(A * B);
+    std::cout << "A*B = [[" << C(0, 0) << ", " << C(0, 1) << "], ["
+        << C(1, 0) << ", " << C(1, 1) << "]]\n";
+    std::cout << "(expected [[19, 22], [43, 50]])\n";
+
     return 0;
 }
