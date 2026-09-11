@@ -43,7 +43,77 @@ AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 }
 
 
-//matrix subtract
+
+//--------------
+// ADDITION Scalar + Vector
+//--------------
+
+template <typename RHS>
+class ScalarVecAddExpr : public VecExpr<ScalarVecAddExpr<RHS>> {
+public:
+    ScalarVecAddExpr(double s, const RHS& r) : s_(s), rhs_(r) {}
+    double operator[](std::size_t i) const { return s_ + rhs_[i]; }
+    std::size_t size() const { return rhs_.size(); }
+private:
+    double s_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+template <typename RHS>
+ScalarVecAddExpr<RHS> operator+(double s, const VecExpr<RHS>& rhs) {
+    return ScalarVecAddExpr<RHS>(s, rhs.self());
+}
+template <typename LHS>
+ScalarVecAddExpr<LHS> operator+(const VecExpr<LHS>& lhs, double s) {
+    return ScalarVecAddExpr<LHS>(s, lhs.self());
+}
+
+
+
+
+//--------------
+// SUBTRACT Scalar - Vector
+// not commutative -- v - s and s - v need separate classes
+//--------------
+
+// v - s
+
+template <typename LHS>
+class VecSubScalarExpr  : public VecExpr<VecSubScalarExpr<LHS>> {
+public:
+    VecSubScalarExpr (const LHS& l, double s) : lhs_(l), s_(s) {}
+    double operator[](std::size_t i) const { return lhs_[i] - s_; }
+    std::size_t size() const { return lhs_.size(); }
+private:
+    typename ExprTraits<LHS>::ExprRef lhs_;
+    double s_;
+};
+
+template <typename LHS>
+VecSubScalarExpr <LHS> operator-(const VecExpr<LHS>& lhs_, double s) {
+    return VecSubScalarExpr<LHS>(s, lhs_.self());
+}
+
+
+// s - v
+
+template <typename RHS>
+class ScalarSubVecExpr  : public VecExpr<ScalarSubVecExpr<RHS>> {
+public:
+    ScalarSubVecExpr (double s, const RHS& r) : s_(s), rhs_(r) {}
+    double operator[](std::size_t i) const { return s_ - rhs_[i]; }
+    std::size_t size() const { return rhs_.size(); }
+private:
+    double s_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+
+template <typename RHS>
+ScalarSubVecExpr <RHS> operator-(double s, const VecExpr<RHS>& rhs) {
+    return ScalarSubVecExpr<RHS>(s, rhs.self());
+}
+
 
 
 

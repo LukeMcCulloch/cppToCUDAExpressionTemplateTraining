@@ -193,5 +193,24 @@ int main() {
     std::cout << "p^T*(A*B) = [" << q[0] << ", " << q[1] << "]\n";
     std::cout << "(expected [62, 72])\n";
 
+
+    //-----------
+    // Matrix + scalar
+    //-----------
+    Vector rv2 = evaluate(a + 5.0);
+    std::cout << "\na+5 = [" << rv2[0] << ", " << rv2[1] << ", " << rv2[2] << "]\n";
+    std::cout << "(expected [6, 7, 8])\n";
+
+    
+    //-----------
+    // scalar - Matrix
+    //-----------
+    Vector rv3 = evaluate(5.0 - a);
+    std::cout << "5-a = [" << rv3[0] << ", " << rv3[1] << ", " << rv3[2] << "]\n";
+    std::cout << "(expected [4, 3, 2])\n";
+
+
+    
+
     return 0;
 }
