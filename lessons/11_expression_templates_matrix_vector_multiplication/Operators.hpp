@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VecExpr.hpp"
+#include "ExprTraits.hpp"
 
 
 
@@ -67,3 +69,9 @@ SubExpr<LHS, RHS> operator-(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 }
 
 
+
+template <typename LHS, typename RHS>
+class MatVecMultExpr : public VecExpr<MatVecMultExpr<LHS, RHS>> {
+
+    ;
+};

@@ -1,5 +1,6 @@
 #pragma once
-
+#include <memory> // std::unique_ptr/std::make_unique
+#include "VecExpr.hpp"
 
 
 
