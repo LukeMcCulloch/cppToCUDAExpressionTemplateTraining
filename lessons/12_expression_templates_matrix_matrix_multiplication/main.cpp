@@ -6,6 +6,9 @@
 #include "ExprTraits.hpp"
 #include "Operators.hpp"
 
+#include "MatExpr.hpp"
+#include "MatOperators.hpp"
+#include "Evaluate.hpp"
 
 
 

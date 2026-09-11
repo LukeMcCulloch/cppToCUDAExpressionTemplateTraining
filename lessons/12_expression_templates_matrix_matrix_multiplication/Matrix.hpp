@@ -1,11 +1,12 @@
 #pragma once
 #include <memory> // std::unique_ptr/std::make_unique
-
+#include "MatExpr.hpp"
 
 
 
 class Matrix {
-public:
+public: public MatExpr<Matrix>
+{
     Matrix(std::size_t rows, std::size_t cols)
         : rows_(rows), cols_(cols), data_(std::make_unique<double[]>(rows* cols)) {
     }
@@ -39,6 +40,7 @@ public:
 private:
     std::size_t rows_, cols_;
     std::unique_ptr<double[]> data_;
+
 };
 
 
