@@ -117,5 +117,32 @@ int main() {
 
 
 
+    //-----------
+    // Vec^T * Mat
+    //-----------
+
+    Vector v(3);
+    v[0] = 1; v[1] = 2; v[2] = 3;
+
+    Matrix N(3, 2); // deliberately non-square: 3 rows, 2 columns
+    N(0, 0) = 1; N(0, 1) = 2;
+    N(1, 0) = 3; N(1, 1) = 4;
+    N(2, 0) = 5; N(2, 1) = 6;
+
+    std::cout << "\n";
+    std::cout << "v = " << "\n";
+    std::cout << "| 1, 2, 3 |" << "\n";
+
+    std::cout << "\n";
+    std::cout << "N = " << "\n";
+    std::cout << "| 1, 2 |" << "\n";
+    std::cout << "| 3, 4 |" << "\n";
+    std::cout << "| 5, 6 |" << "\n";
+
+    std::cout << "\n";
+    Vector z = evaluate(v * N);
+    std::cout << "v^T*N = [" << z[0] << ", " << z[1] << "]\n";
+    std::cout << "(expected [22, 28])\n";
+
     return 0;
 }
