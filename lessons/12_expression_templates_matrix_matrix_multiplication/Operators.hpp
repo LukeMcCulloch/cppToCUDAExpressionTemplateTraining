@@ -106,10 +106,3 @@ MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v)
     return MatVecMultExpr<RHS>(m, v.self());
 }
 
-
-
-// todo:  matrix - matrix multiplication
-//template <typename LHS, typename RHS>
-//class MatVecMultExpr : public VecExpr<MatVecMultExpr<LHS, RHS>> {
-//     
-//};

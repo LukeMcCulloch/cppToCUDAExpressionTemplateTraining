@@ -10,6 +10,8 @@ struct MatExpr
     // CRTP: cast this base to the derived type, so we can call derived methods from the base class
     const Derived& self() const { return static_cast<const Derived&>(*this); } // get through to the real type.  -> cast this base to the derived type, so we can call derived methods from the base class
 
-    double operator()(std::size_t i, std::size_t j) const { return self(i, j); } // look up operator() on the real type, not on me, via the CRTP implemented in self() above. 
-    std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above.
+    double operator()(std::size_t i, std::size_t j) const { return self()(i, j); } // look up operator() on the real type, not on me, via the CRTP implemented in self() above. 
+    //std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above.
+    std::size_t rows() const { return self().rows(); }
+    std::size_t cols() const { return self().cols(); }
 };

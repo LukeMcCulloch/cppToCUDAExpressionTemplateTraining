@@ -4,9 +4,11 @@
 
 
 
-class Matrix {
-public: public MatExpr<Matrix>
+class Matrix : public MatExpr<Matrix>{
 {
+
+public:
+
     Matrix(std::size_t rows, std::size_t cols)
         : rows_(rows), cols_(cols), data_(std::make_unique<double[]>(rows* cols)) {
     }

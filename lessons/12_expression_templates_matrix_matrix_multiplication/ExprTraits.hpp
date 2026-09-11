@@ -29,25 +29,20 @@ struct ExprTraits<Vector> { using ExprRef = const Vector&; };
 
 //
 //// Specialized for Matrix: store by const reference
-//template <>
-//struct ExprTraits<Matrix> { using ExprRef = const Matrix&; };
+// Matrix joins the same storage-trait system as Vector -- expensive to
+// copy, so store by reference when used as an operand.
+template <>
+struct ExprTraits<Matrix> { using ExprRef = const Matrix&; };
 
-
-
- // Matrix joins the same storage-trait system as Vector -- expensive to
- // copy, so store by reference when used as an operand.
- template <>
- struct ExprTraits<Matrix> { using ExprRef = const Matrix&; };
-
- /*
- Matrix owns a real heap buffer (potentially large), 
- so copying it into an expression node would be wasteful and pointless 
- — you want a reference instead. Without this specialization, 
- Matrix would fall through to the default rule (ExprRef = T, store by value) 
- the same way AddExpr/SubExpr do 
- — and a MatVecMultExpr storing a Matrix by value would deep-copy 
-    the entire matrix every time you wrote M * x. 
- This line exists purely to opt Matrix out of that default, the same way the Vector one does.
- */
+/*
+Matrix owns a real heap buffer (potentially large), 
+so copying it into an expression node would be wasteful and pointless 
+— you want a reference instead. Without this specialization, 
+Matrix would fall through to the default rule (ExprRef = T, store by value) 
+the same way AddExpr/SubExpr do 
+— and a MatVecMultExpr storing a Matrix by value would deep-copy 
+   the entire matrix every time you wrote M * x. 
+This line exists purely to opt Matrix out of that default, the same way the Vector one does.
+*/
 
 
