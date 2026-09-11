@@ -73,8 +73,22 @@ int main() {
     Vector x(3);
     x[0] = 1; x[1] = 2; x[2] = 3;
 
+
+    std::cout << "\n";
+    std::cout << "M = " << "\n";
+    std::cout << "| 1, 2, 3 |" << "\n";
+    std::cout << "| 0, 1, 4 |" << "\n";
+    std::cout << "| 5, 6, 0 |" << "\n";
+
+    std::cout << "\n";
+    std::cout << "x = " << "\n";
+    std::cout << "| 1, 2, 3 |^T" << "\n";
+
+
+    std::cout << "\n";
     Vector y = evaluate(M * x);
     std::cout << "M*x = [" << y[0] << ", " << y[1] << ", " << y[2] << "]\n";
+    std::cout << "\n";
     std::cout << "(expected [14, 14, 17])\n";
 
     return 0;
