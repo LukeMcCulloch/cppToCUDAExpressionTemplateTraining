@@ -75,14 +75,14 @@ MatSubExpr<LHS, RHS> operator-(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs)
 //--------------
 
 template <typename RHS>
-class MatMulScalarExpr : public MatExpr<MatMulScalarExpr<RHS>> {
+class ScalarMatMultExpr : public MatExpr<ScalarMatMultExpr<RHS>> {
 public:
-    MatMulScalarExpr(double s, const RHS& r) : s_(s), rhs_(r) {}
-    double operator()(std::size_t i) const { return s_ * rhs_(i,j); }
+    ScalarMatMultExpr(double s, const RHS& r) : s_(s), rhs_(r) {}
+    double operator()(std::size_t i, std::size_t j) const { return s_ * rhs_(i,j); }
     std::size_t size() const { return rhs_.size(); }
 
     
-    std::size_t rows() const { return lhs_.rows(); }
+    std::size_t rows() const { return rhs_.rows(); }
     std::size_t cols() const { return rhs_.cols(); }
 
 
@@ -93,12 +93,12 @@ private:
 
 
 template <typename RHS>
-MatMulScalarExpr<RHS> operator*(double s, const MatExpr<RHS>& rhs) {
-    return MatMulScalarExpr<RHS>(s, rhs.self());
+ScalarMatMultExpr<RHS> operator*(double s, const MatExpr<RHS>& rhs) {
+    return ScalarMatMultExpr<RHS>(s, rhs.self());
 }
 template <typename LHS>
-MatMulScalarExpr<LHS> operator*(const MatExpr<LHS>& lhs, double s) {
-    return MatMulScalarExpr<LHS>(s, lhs.self());
+ScalarMatMultExpr<LHS> operator*(const MatExpr<LHS>& lhs, double s) {
+    return ScalarMatMultExpr<LHS>(s, lhs.self());
 }
 
 
