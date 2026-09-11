@@ -64,5 +64,18 @@ int main() {
     }
     std::cout << "]\n(expected [89, 178, 267])\n";
 
+
+    Matrix M(3, 3);
+    M(0, 0) = 1; M(0, 1) = 2; M(0, 2) = 3;
+    M(1, 0) = 0; M(1, 1) = 1; M(1, 2) = 4;
+    M(2, 0) = 5; M(2, 1) = 6; M(2, 2) = 0;
+
+    Vector x(3);
+    x[0] = 1; x[1] = 2; x[2] = 3;
+
+    Vector y = evaluate(M * x);
+    std::cout << "M*x = [" << y[0] << ", " << y[1] << ", " << y[2] << "]\n";
+    std::cout << "(expected [14, 14, 17])\n";
+
     return 0;
 }
