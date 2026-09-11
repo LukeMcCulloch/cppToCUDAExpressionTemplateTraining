@@ -125,7 +125,7 @@ struct ExprTraits { using ExprRef = T; };
 // to copy (a real heap buffer), and a named Vector passed into an
 // expression outlives the expression using it in ordinary code -- so a
 // reference is both safe and avoids an expensive copy.
-template <>
+template <>// <= this lets us fix the type(to)<Vector>(in this case) and avoid the copy
 struct ExprTraits<Vector> { using ExprRef = const Vector&; };
 // redefines ExprRef as "const Vectort&" for Vectors
 
