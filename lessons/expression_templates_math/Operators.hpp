@@ -5,6 +5,8 @@
 
 
 
+
+
 //--------------
 // ADD
 //--------------
@@ -41,6 +43,7 @@ AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 }
 
 
+//matrix subtract
 
 
 
@@ -73,6 +76,32 @@ SubExpr<LHS, RHS> operator-(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 }
 
 
+
+
+
+//--------------
+// MULTIPLY Scalar * Vector
+//--------------
+
+template <typename RHS>
+class ScalarVecMultExpr : public VecExpr<ScalarVecMultExpr<RHS>> {
+public:
+    ScalarVecMultExpr(double s, const RHS& r) : s_(s), rhs_(r) {}
+    double operator[](std::size_t i) const { return s_ * rhs_[i]; }
+    std::size_t size() const { return rhs_.size(); }
+private:
+    double s_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+template <typename RHS>
+ScalarVecMultExpr<RHS> operator*(double s, const VecExpr<RHS>& rhs) {
+    return ScalarVecMultExpr<RHS>(s, rhs.self());
+}
+template <typename LHS>
+ScalarVecMultExpr<LHS> operator*(const VecExpr<LHS>& lhs, double s) {
+    return ScalarVecMultExpr<LHS>(s, lhs.self());
+}
 
 
 //--------------

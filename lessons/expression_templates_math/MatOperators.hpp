@@ -9,7 +9,69 @@
 
 
 
+//--------------
+// ADD Matrix with Scalar
+//--------------
+template <typename LHS, typename RHS>
+class MatAddExpr : public MatExpr<MatAddExpr<LHS, RHS>> {
+public:
+    MatAddExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
+
+    double operator()(std::size_t i, std::size_t j) const { return lhs_(i,j) + rhs_(i, j); }// iteration though all i is done by the evaluate function
+    
+    std::size_t rows() const { return lhs_.rows(); }
+    std::size_t cols() const { return lhs_.cols(); }
+
+
+private:
+    typename ExprTraits<LHS>::ExprRef lhs_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+
+template <typename LHS, typename RHS>
+MatAddExpr<LHS, RHS> operator+(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs) {
+    return MatAddExpr<LHS, RHS>(lhs.self(), rhs.self());
+}
+
+
+
+//--------------
+// SUBTRACT with Matrix with Scalar
+//--------------
+template <typename LHS, typename RHS>
+class MatSubExpr : public MatExpr<MatSubExpr<LHS, RHS>> {
+public:
+    MatSubExpr(const LHS& l, const RHS& r) : lhs_(l), rhs_(r) {}
+
+    double operator()(std::size_t i, std::size_t j) const { return lhs_(i, j) - rhs_(i, j); }// iteration though all i is done by the evaluate function
+    
+    std::size_t rows() const { return lhs_.rows(); }
+    std::size_t cols() const { return lhs_.cols(); }
+
+
+private:
+    typename ExprTraits<LHS>::ExprRef lhs_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+
+template <typename LHS, typename RHS>
+MatSubExpr<LHS, RHS> operator+(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs) {
+    return MatSubExpr<LHS, RHS>(lhs.self(), rhs.self());
+}
+
+
+
+//--------------
+// SUBTRACT 
+//--------------
+
+
+
+//--------------
 // matrix - matrix multiplication
+//--------------
 template <typename LHS, typename RHS>
 class MatMulExpr : public MatExpr<MatMulExpr<LHS, RHS>> {
 
