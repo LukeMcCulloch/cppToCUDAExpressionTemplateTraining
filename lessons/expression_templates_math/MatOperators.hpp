@@ -10,7 +10,7 @@
 
 
 //--------------
-// ADD Matrix with Scalar
+// ADD Matrix with Matrix
 //--------------
 template <typename LHS, typename RHS>
 class MatAddExpr : public MatExpr<MatAddExpr<LHS, RHS>> {
@@ -37,7 +37,7 @@ MatAddExpr<LHS, RHS> operator+(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs)
 
 
 //--------------
-// SUBTRACT with Matrix with Scalar
+// SUBTRACT with Matrix with Matrix
 //--------------
 template <typename LHS, typename RHS>
 class MatSubExpr : public MatExpr<MatSubExpr<LHS, RHS>> {
@@ -57,7 +57,7 @@ private:
 
 
 template <typename LHS, typename RHS>
-MatSubExpr<LHS, RHS> operator+(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs) {
+MatSubExpr<LHS, RHS> operator-(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs) {
     return MatSubExpr<LHS, RHS>(lhs.self(), rhs.self());
 }
 
@@ -66,6 +66,40 @@ MatSubExpr<LHS, RHS> operator+(const MatExpr<LHS>& lhs, const MatExpr<RHS>& rhs)
 //--------------
 // SUBTRACT 
 //--------------
+
+
+
+
+//--------------
+// MULTIPLY Scalar * Matrix
+//--------------
+
+template <typename RHS>
+class MatMulScalarExpr : public MatExpr<MatMulScalarExpr<RHS>> {
+public:
+    MatMulScalarExpr(double s, const RHS& r) : s_(s), rhs_(r) {}
+    double operator()(std::size_t i) const { return s_ * rhs_(i,j); }
+    std::size_t size() const { return rhs_.size(); }
+
+    
+    std::size_t rows() const { return lhs_.rows(); }
+    std::size_t cols() const { return rhs_.cols(); }
+
+
+private:
+    double s_;
+    typename ExprTraits<RHS>::ExprRef rhs_;
+};
+
+
+template <typename RHS>
+MatMulScalarExpr<RHS> operator*(double s, const MatExpr<RHS>& rhs) {
+    return MatMulScalarExpr<RHS>(s, rhs.self());
+}
+template <typename LHS>
+MatMulScalarExpr<LHS> operator*(const MatExpr<LHS>& lhs, double s) {
+    return MatMulScalarExpr<LHS>(s, lhs.self());
+}
 
 
 

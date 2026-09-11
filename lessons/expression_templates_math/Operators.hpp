@@ -8,7 +8,7 @@
 
 
 //--------------
-// ADD
+// ADD, vector - vector
 //--------------
 // AddExpr stores whatever ExprTraits<LHS>::ExprRef / ExprTraits<RHS>::ExprRef
 // resolve to -- a reference for a Vector operand, a value for a nested
@@ -48,7 +48,7 @@ AddExpr<LHS, RHS> operator+(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 
 
 //--------------
-// SUBTRACT
+// SUBTRACT, vector - vector
 //--------------
 
 template <typename LHS, typename RHS>
@@ -185,6 +185,10 @@ template <typename LHS, typename RHS>
 VecMatMultExpr<LHS, RHS> operator*(const VecExpr<LHS>& v, const MatExpr<RHS>& m) {
     return VecMatMultExpr<LHS, RHS>(v.self(), m.self());
 }
+
+
+
+
 
 
 
