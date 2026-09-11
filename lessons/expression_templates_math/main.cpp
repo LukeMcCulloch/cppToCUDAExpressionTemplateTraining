@@ -144,5 +144,54 @@ int main() {
     std::cout << "v^T*N = [" << z[0] << ", " << z[1] << "]\n";
     std::cout << "(expected [22, 28])\n";
 
+
+
+    //-----------
+    // all M * M * V expression templates
+    //-----------
+
+    std::cout << "\n";
+    std::cout << "A = " << "\n";
+    std::cout << "| 1, 2 |" << "\n";
+    std::cout << "| 3, 4 |" << "\n";
+
+
+    std::cout << "\n";
+    std::cout << "B = " << "\n";
+    std::cout << "| 5, 6 |" << "\n";
+    std::cout << "| 7, 8 |" << "\n";
+
+
+    std::cout << "\n";
+    std::cout << "w = " << "\n";
+    std::cout << "[ 1, 1 ]" << "\n";
+
+
+    Vector w(2);
+    w[0] = 1; w[1] = 1;
+
+    Vector u = evaluate(A * B * w);
+    std::cout << "(A*B)*w = [" << u[0] << ", " << u[1] << "]\n";
+    std::cout << "(expected [41, 93])\n";
+
+
+    //-----------
+    // Vec^T * (Mat * Mat)  -- reuses A, B from the matmul section above.
+    // Nothing gets materialized between the A*B and the p^T*(...) --
+    // this is the new thing the RHS generalization enables.
+    //-----------
+
+    Vector p(2);
+    p[0] = 1; p[1] = 1;
+
+    std::cout << "\n";
+    std::cout << "p = " << "\n";
+    std::cout << "| 1, 1 |" << "\n";
+
+    std::cout << "\n";
+    Vector q = evaluate(p * (A * B));
+    std::cout << "p^T*(A*B) = [" << q[0] << ", " << q[1] << "]\n";
+    std::cout << "(expected [62, 72])\n";
+
     return 0;
 }

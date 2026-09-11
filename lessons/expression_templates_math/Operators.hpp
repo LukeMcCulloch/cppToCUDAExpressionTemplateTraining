@@ -79,17 +79,20 @@ SubExpr<LHS, RHS> operator-(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 // MULTIPLY Mat * Vec
 //--------------
 
-template <typename RHS>
-class MatVecMultExpr : public VecExpr<MatVecMultExpr<RHS>> {
-// this class is structuraly tied to producing a 1D VecExpr shaped result 
-//      (it inherits from VecExpr<MultExpr<RHS>>)
+
+// generalized to expressions on both sides
+template <typename LHS, typename RHS>
+class MatVecMultExpr : public VecExpr<MatVecMultExpr<LHS, RHS>> {
+    // this class is structuraly tied to producing a 1D VecExpr shaped result 
+    //      (it inherits from VecExpr<MultExpr<RHS>>)
+    // generalized by allowing both sides to be resultants from other computations - i.e. both sides to be expressions
 public:
-    MatVecMultExpr(const Matrix& m, const RHS& v) : m_(m), v_(v) {}
+    MatVecMultExpr(const LHS& m, const RHS& v) : m_(m), v_(v) {}
 
     double operator[](std::size_t i) const {
         // dot product of one row of the matrix with the vector
         double sum = 0.0;
-        for (std::size_t k = 0; k < m_.cols(); ++k) 
+        for (std::size_t k = 0; k < m_.cols(); ++k)
         {
             sum += m_(i, k) * v_[k];
         }
@@ -99,17 +102,19 @@ public:
     std::size_t size() const { return m_.rows(); }// size of the output
 
 private:
-    typename ExprTraits<Matrix>::ExprRef m_;
+    typename ExprTraits<LHS>::ExprRef m_;
     typename ExprTraits<RHS>::ExprRef v_;
 
 };
 
 
-// operator free function
-template <typename RHS>
-MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v) {
-    return MatVecMultExpr<RHS>(m, v.self());
+template <typename LHS, typename RHS>
+MatVecMultExpr<LHS, RHS> operator*(const MatExpr<LHS>& m, const VecExpr<RHS>& v) {
+    return MatVecMultExpr<LHS, RHS>(m.self(), v.self());
 }
+
+
+
 
 
 
@@ -117,19 +122,21 @@ MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v) {
 // MULTIPLY Vec^T * Mat
 //--------------
 
-template <typename LHS>
-class VecMatMultExpr : public VecExpr<VecMatMultExpr<LHS>> {
-// this class is structuraly tied to producing a 1D VecExpr shaped result 
-//      (it inherits from VecExpr<MultExpr<RHS>>)
+
+template <typename LHS, typename RHS >
+class VecMatMultExpr : public VecExpr<VecMatMultExpr<LHS, RHS>> {
+    // this class is structuraly tied to producing a 1D VecExpr shaped result 
+    //      (it inherits from VecExpr<MultExpr<RHS>>)
+    // now finished by allowing both sides to be resultants from other computations
 public:
-    VecMatMultExpr(const LHS& v, const Matrix& m) : v_(v), m_(m) {}
+    VecMatMultExpr(const LHS& v, const RHS& m) : v_(v), m_(m) {}
 
     double operator[](std::size_t i) const {
         // dot product of vector^T with one column of the matrix
         double sum = 0.0;
-        for (std::size_t k = 0; k < m_.rows(); ++k) 
+        for (std::size_t k = 0; k < m_.rows(); ++k)
         {
-            sum += v_[k] * m_(k, i) ;
+            sum += v_[k] * m_(k, i);
         }
         return sum;
     }
@@ -138,15 +145,16 @@ public:
 
 private:
     typename ExprTraits<LHS>::ExprRef v_;
-    typename ExprTraits<Matrix>::ExprRef m_;
+    //typename ExprTraits<Matrix>::ExprRef m_;
+    typename ExprTraits<RHS>::ExprRef m_;
 
 };
 
 
 // operator free function
-template <typename LHS>
-VecMatMultExpr<LHS> operator*(const VecExpr<LHS>& v, const Matrix& m) {
-    return VecMatMultExpr<LHS>(v.self(), m);
+template <typename LHS, typename RHS>
+VecMatMultExpr<LHS, RHS> operator*(const VecExpr<LHS>& v, const MatExpr<RHS>& m) {
+    return VecMatMultExpr<LHS, RHS>(v.self(), m.self());
 }
 
 
