@@ -74,11 +74,11 @@ SubExpr<LHS, RHS> operator-(const VecExpr<LHS>& lhs, const VecExpr<RHS>& rhs) {
 
 // replace name with class MatVecMultExpr
 template <typename RHS>
-class MultExpr : public VecExpr<MultExpr<RHS>> {
-    // this class is structuraly tied to producing a 1D VecExpr shaped result 
-    //      (it inherits from VecExpr<MultExpr<RHS>>)
+class MatVecMultExpr : public VecExpr<MatVecMultExpr<RHS>> {
+// this class is structuraly tied to producing a 1D VecExpr shaped result 
+//      (it inherits from VecExpr<MultExpr<RHS>>)
 public:
-    MultExpr(const Matrix& m, const RHS& v) : m_(m), v_(v) {}
+    MatVecMultExpr(const Matrix& m, const RHS& v) : m_(m), v_(v) {}
 
     double operator[](std::size_t i) const {
         // dot product of one row of the matrix with the vector
@@ -102,9 +102,9 @@ private:
 
 // operator free function
 template <typename RHS>
-MultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v)
+MatVecMultExpr<RHS> operator*(const Matrix& m, const VecExpr<RHS>& v)
 {
-    return MultExpr<RHS>(m, v.self());
+    return MatVecMultExpr<RHS>(m, v.self());
 }
 
 
