@@ -13,6 +13,9 @@ struct VecExpr
     double operator[](std::size_t i) const { return self()[i]; } // look up operator[] on the real type, not on me, via the CRTP implemented in self() above. -> look up operator[] on the real type, not on me, via the CRTP implemented in self() above.
     std::size_t size() const { return self().size(); } // look up size() on the real type, not on me, via the CRTP implemented in self() above. -> look up size() on the real type, not on me, via the CRTP implemented in self() above.
 
+
+    void backward(const Vector& adjoint) const { self().backward(adjoint); }
+
 };
 
 

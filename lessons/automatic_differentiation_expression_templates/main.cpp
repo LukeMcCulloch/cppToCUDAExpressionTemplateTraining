@@ -243,8 +243,5 @@ int main() {
                                   << contraction_result[1] << ", "
                                   << contraction_result[2] << "]\n";
     std::cout << "(expected [240, 340, 440])\n";
-
-
-
     return 0;
 }
