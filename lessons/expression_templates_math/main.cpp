@@ -5,6 +5,7 @@
 #include "Vector.hpp"
 #include "ExprTraits.hpp"
 #include "Operators.hpp"
+#include "dot.hpp"
 
 #include "MatExpr.hpp"
 #include "MatOperators.hpp"
@@ -210,7 +211,37 @@ int main() {
     std::cout << "(expected [4, 3, 2])\n";
 
 
-    
+    //---------
+    // dot (vec, vec)
+    //
+    // and operator* for Vector*Vector
+    //-----------
 
+    /*
+    a[0] = 1; a[1] = 2; a[2] = 3;
+    b[0] = 10; b[1] = 20; b[2] = 30;
+    c[0] = 100; c[1] = 200; c[2] = 300;
+    */
+
+    std::cout << "\n";
+    std::cout << "a = [ 1, 2, 3 ]" << "\n";
+    std::cout << "b =  [ 10, 20, 30 ]" << "\n";
+    std::cout << "c =  [ 100, 200, 300 ]" << "\n";
+
+    double d1 = dot(a, b);
+    std::cout << "\ndot(a, b) = " << d1 << "\n";
+    std::cout << "(expected 140)\n";
+
+    double d2 = a * b;
+    std::cout << "a * b     = " << d2 << "\n";
+    std::cout << "(expected 140, same as dot(a,b) -- operator* just delegates to dot())\n";
+
+    // The FEM-style case: a contraction appearing mid-expression,
+    // producing a scalar that then broadcasts against another vector.
+    Vector contraction_result = evaluate(a * b + c);
+    std::cout << "\na*b + c = [" << contraction_result[0] << ", "
+                                  << contraction_result[1] << ", "
+                                  << contraction_result[2] << "]\n";
+    std::cout << "(expected [240, 340, 440])\n";
     return 0;
 }
