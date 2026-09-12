@@ -2,6 +2,8 @@
 #include <memory> // std::unique_ptr/std::make_unique
 #include "VecExpr.hpp"
 
+#include "ExprTraits.hpp"
+
 
 
 
@@ -49,13 +51,18 @@ public:
     void zero_grad() const { grad_.reset(); }
     const Vector& grad() const { return *grad_; }
 
-    // added to Vector's private section:
-    mutable std::unique_ptr<Vector> grad_;
 
 private:
     std::size_t size_;
     std::unique_ptr<double[]> data_;// unique_ptr<double[]> implements destructor and move for us, 
     // so we don't write them here. 
     // Copy is the one thing unique_ptr doesn't implement, so we do it by hand.
+    
+    mutable std::unique_ptr<Vector> grad_;
 };
+
+
+
+template <>
+struct ExprTraits<Vector> { using ExprRef = const Vector&; };
 

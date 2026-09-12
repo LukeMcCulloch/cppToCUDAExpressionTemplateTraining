@@ -243,5 +243,29 @@ int main() {
                                   << contraction_result[1] << ", "
                                   << contraction_result[2] << "]\n";
     std::cout << "(expected [240, 340, 440])\n";
+
+
+
+    //---------
+    // automatic differentiation (reverse mode)
+    //-----------
+
+    Vector pp(3);
+    pp[0] = 1; pp[1] = 2; pp[2] = 3;
+    Vector qq(3);
+    qq[0] = 10; qq[1] = 20; qq[2] = 30;
+
+    auto expr = pp + qq;
+    Vector fwd = evaluate(expr);
+    std::cout << "\nforward: pp+qq = [" << fwd[0] << ", " << fwd[1] << ", " << fwd[2] << "]\n";
+
+    Vector seed(3);
+    seed[0] = 1; seed[1] = 1; seed[2] = 1; // pretend d(loss)/d(result) = [1,1,1]
+    expr.backward(seed);
+
+    std::cout << "pp.grad() = [" << pp.grad()[0] << ", " << pp.grad()[1] << ", " << pp.grad()[2] << "]\n";
+    std::cout << "(expected [1, 1, 1])\n";
+    std::cout << "qq.grad() = [" << qq.grad()[0] << ", " << qq.grad()[1] << ", " << qq.grad()[2] << "]\n";
+    std::cout << "(expected [1, 1, 1])\n";
     return 0;
 }

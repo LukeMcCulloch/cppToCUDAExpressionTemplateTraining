@@ -1,1 +1,1 @@
-add_executable(expressioautomatic_differentiation_expression_templatesn_templates_math main.cpp)
+add_executable(automatic_differentiation_expression_templates main.cpp)

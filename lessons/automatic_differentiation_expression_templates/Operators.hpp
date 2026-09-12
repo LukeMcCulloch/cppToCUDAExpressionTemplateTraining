@@ -3,7 +3,9 @@
 #include "VecExpr.hpp"
 #include "ExprTraits.hpp"
 
+#include "MatExpr.hpp"
 
+#include "Vector.hpp"
 
 
 

@@ -2,6 +2,15 @@
 
 
 
+class Vector; // forward declaration -- a reference parameter doesn't need the full definition
+// A full #include "Vector.hpp" here would  
+// create a circular include 
+// (Vector.hpp already includes VecExpr.hpp, to get its own base class), 
+// so the forward declaration is the correct fix, 
+
+
+
+
 // CRTP base -- same self() idiom as lesson 07, and the same shape as
 // Expr<Derived> from your very first AD project's TinyADExpr.hpp.
 template <typename Derived>
