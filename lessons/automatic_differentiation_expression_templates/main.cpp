@@ -248,6 +248,7 @@ int main() {
 
     //---------
     // automatic differentiation (reverse mode)
+    // vector + vector only
     //-----------
 
     Vector pp(3);
